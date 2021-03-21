@@ -21,6 +21,7 @@ def getIcs(subjectSet):
             event['dtend'] = single[1]
             event['rrule'] = f'FREQ=WEEKLY;UNTIL={untilDate(subjectSet["info"]["term"]["end"])}'
             event['description'] = f'{item["professor"]} 교수'
+            event['location'] = f'{item["place"]}'
 
             cal.add_component(event)
 

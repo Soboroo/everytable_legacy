@@ -1,10 +1,6 @@
 import datetime
 import xml.etree.ElementTree as Et
-
-from os import path
 from requests import Session
-import sys
-from selenium import webdriver
 
 
 def icsTime(subjectTime, time, startDate):
@@ -18,39 +14,10 @@ class everyTable:
     __s = Session()
 
     def __init__(self, userid, passwd):
-        agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 ' \
-                'Safari/537.36 '
-
-        headers = {'User-Agent': agent}
-
-        options = webdriver.ChromeOptions()
-        options.add_argument('headless')
-        options.add_argument('window-size=1920x1080')
-        options.add_argument('User-Agent=' + agent)
-
-        if getattr(sys, 'frozen', False):
-            chromedriver_path = path.join(sys._MEIPASS, "chromedriver.exe")
-            driver = webdriver.Chrome(chromedriver_path, options=options)
-        else:
-            driver = webdriver.Chrome(options=options)
-
-        driver.implicitly_wait(1)
-
-        print("애브리타임 접속중...")
-
-        driver.get('https://everytime.kr/login')
-        driver.find_element_by_name('userid').send_keys(userid)
-        driver.find_element_by_name('password').send_keys(passwd)
-        driver.find_element_by_xpath('//*[@class="submit"]/input').click()
-        driver.implicitly_wait(1)
+        headers = {'User-Agent': 'Chrome/88.0.4324.190'}
 
         self.__s.headers.update(headers)
-
-        for cookie in driver.get_cookies():
-            c = {cookie['name']: cookie['value']}
-            self.__s.cookies.update(c)
-
-        driver.quit()
+        self.__s.get(f'https://everytime.kr/user/login?userid={userid}&password={passwd}')
 
     def getTerm(self, year, semester):
         response = self.__s.get('https://api.everytime.kr/find/timetable/subject/semester/list')
